@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Animal</title>
+</head>
+<body>
+    
+    <form action="/animals" method="POST">
+        <div>
+            <label for="species">Species</label>
+            <input type="text" id="species" name="animal[species]">
+        </div>
+        <div>
+            <label for="location">Location</label>
+            <input type="text" id="location" name="animal[location]">
+        </div>
+        <button>Add Animal</button>
+        <a href="/animals">All Animals</a>
+    </form>
+
+</body>
+</html>

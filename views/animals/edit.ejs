@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Animal</title>
+</head>
+<body>
+    
+    <form action="/animals/<%= animal._id%>?_method=PUT" method="POST">
+        <div>
+            <label for="species">Species</label>
+            <input type="text" id="species" name="animal[species]" value="<%= animal.species %>">
+        </div>
+        <div>
+            <label for="location">Location</label>
+            <input type="text" id="location" name="animal[location]" value="<%= animal.location %>">
+        </div>
+        <button>Update Animal</button>
+        <a href="/animals/<%= animal._id%>">Back to Animal</a>
+    </form>
+
+</body>
+</html>
