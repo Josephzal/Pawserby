@@ -1,25 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Animal</title>
-</head>
-<body>
-    
-    <form action="/animals/<%= animal._id%>?_method=PUT" method="POST">
-        <div>
-            <label for="species">Species</label>
-            <input type="text" id="species" name="animal[species]" value="<%= animal.species %>">
-        </div>
-        <div>
-            <label for="location">Location</label>
-            <input type="text" id="location" name="animal[location]" value="<%= animal.location %>">
-        </div>
-        <button>Update Animal</button>
-        <a href="/animals/<%= animal._id%>">Back to Animal</a>
-    </form>
+<% layout('layouts/boilerplate') %>
 
-</body>
-</html>
+    <div class="row">
+        <h1 class="text-center">Edit Animal</h1>
+        <div class="col-6 offset-3">
+            <form action="/animals/<%= animal._id%>?_method=PUT" method="POST" novalidate class="validated-form">
+                <div class="mb-3">
+                    <label  class="form-label" for="species">Species</label>
+                    <input  class="form-control" type="text" id="species" name="animal[species]" value="<%= animal.species %>" required>
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label" for="location">Location</label>
+                    <input  class="form-control" type="text" id="location" name="animal[location]" value="<%= animal.location %>" required>
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label" class="form-label" for="image">Image Url</label>
+                    <input  class="form-control" class="form-control" type="text" id="image" name="animal[image]" value="<%= animal.image %>" required>
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label" for="description">Description</label>
+                    <input  class="form-control" type="text" id="description" name="animal[description]" value="<%= animal.description %>" required>
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label" for="name">Name (Optional)</label>
+                    <input  class="form-control" type="text" id="name" name="animal[name]" value="<%= animal.description %>">
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-success">Update Animal</button>
+                </div>
+            </form>      
+            <a href="/animals/<%= animal._id%>">Back to Animal</a>
+        </div>
+    </div>

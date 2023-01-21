@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
+const Comment = require('./comment');
 const Schema = mongoose.Schema;
 
 const AnimalSchema = new Schema({
     species: String,
-    type: String,
+    image: String,
+    name: String,
     description: String,
-    location: String  
+    location: String,
+    comments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
+        }
+    ]  
 });
 
 module.exports = mongoose.model('Animal', AnimalSchema);
