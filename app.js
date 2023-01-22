@@ -2,8 +2,10 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-const Animal = require('./models/animal');
 const ejsMate = require('ejs-mate');
+const Animal = require('./models/animal');
+const Comment = require('./models/comment');
+
 
 mongoose.set('strictQuery', false);
 
@@ -47,7 +49,7 @@ app.post('/animals', async(req, res) => {
 });
 
 app.get('/animals/:id', async(req, res) => {
-    const animal = await Animal.findById(req.params.id);
+    const animal = await Animal.findById(req.params.id).populate('comments');
     res.render('animals/show', {animal});
 });
 
@@ -66,6 +68,23 @@ app.delete('/animals/:id', async(req, res) => {
     const { id } = req.params;
     await Animal.findByIdAndDelete(id);
     res.redirect('/animals');
+});
+
+app.post('/animals/:id/comments', async (req, res) => {
+    const animal = await Animal.findById(req.params.id);
+    const comment = new Comment(req.body.comment);
+    animal.comments.push(comment);
+    await comment.save();
+    await animal.save();
+    res.redirect(`/animals/${animal._id}`);
+});
+
+app.delete('/animals/:id/comments/:commentId', async (req, res) => {
+    const { id, commentId } = req.params;
+    // remove comment from array in mongo
+    await Animal.findByIdAndUpdate(id, { $pull: { comments: commentId } });
+    await Comment.findByIdAndDelete(commentId);
+    res.redirect(`/animals/${id}`);
 });
 
 app.listen(3000, () => {

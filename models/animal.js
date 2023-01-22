@@ -16,4 +16,15 @@ const AnimalSchema = new Schema({
     ]  
 });
 
+AnimalSchema.post('findOneAndDelete', async function (doc) {
+    // if animal data exists, remove all comments on deletion
+    if(doc){
+        await Comment.deleteMany({
+            _id: {
+                $in: doc.comments
+            }
+        })
+    }
+});
+
 module.exports = mongoose.model('Animal', AnimalSchema);

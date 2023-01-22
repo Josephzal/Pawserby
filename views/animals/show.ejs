@@ -5,7 +5,11 @@
             <div class="card mb-3">
                 <img src="<%= animal.image %>" class="card-img-top" alt="image of animal">
                 <div class="card-body">
-                    <h5 class="card-title"><%= animal.species %></h5>
+                    <h5 class="card-title"><%= animal.species %> 
+                        <% if (animal.name) { %>
+                            - <%= animal.name %>
+                        <% } %>
+                    </h5>
                     <p class="card-text"><%= animal.description %></p>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -26,8 +30,8 @@
             <h2>Leave a Comment</h2>
             <form action="/animals/<%= animal._id %>/comments" method="POST" class="mb-3 validated-form" novalidate>
                 <div class="mb-3">
-                    <label for="user" class="form-label">User</label>
-                    <input type="text" name="comment[user]" id="user">
+                    <label class="form-label" for="user" class="form-label">User</label>
+                    <input class="form-control" type="text" name="comment[user]" id="user" required>
                 </div>
                 <div class="mb-3">
                     <label for="body" class="form-label">Comment</label>
@@ -38,7 +42,7 @@
             <% for (let comment of animal.comments) { %>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">User: <%= comment.user %></h5>
+                        <h5 class="card-title"><%= comment.user %></h5>
                         <p class="card-text">Comment: <%= comment.body %></p>
                         <form action="/animals/<%= animal._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-sm btn-danger">Delete</button>
