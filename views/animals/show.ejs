@@ -10,10 +10,10 @@
                             - <%= animal.name %>
                         <% } %>
                     </h5>
-                    <p class="card-text"><%= animal.description %></p>
+                    <p class="card-text text-secondary"><%= animal.location %></p>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item text-secondary"><%= animal.location %></li>
+                    <li class="list-group-item"><%= animal.description %></li>
                 </ul>
                 <div class="card-body">
                     <a class="card-link btn btn-success" href="/animals/<%= animal._id %>/edit">Edit</a>
@@ -28,7 +28,7 @@
         </div>
         <div class="col-6">
             <h2>Leave a Comment</h2>
-            <form action="/animals/<%= animal._id %>/comments" method="POST" class="mb-3 validated-form" novalidate>
+            <form action="/animals/<%= animal._id %>/comments" method="POST" class="mb-5 validated-form" novalidate>
                 <div class="mb-3">
                     <label class="form-label" for="user" class="form-label">User</label>
                     <input class="form-control" type="text" name="comment[user]" id="user" required>
@@ -39,11 +39,12 @@
                 </div>
                 <button class="btn btn-success">Submit</button>
             </form>
+            <h2>Comments</h2>
             <% for (let comment of animal.comments) { %>
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title"><%= comment.user %></h5>
-                        <p class="card-text">Comment: <%= comment.body %></p>
+                        <p class="card-text"><%= comment.body %></p>
                         <form action="/animals/<%= animal._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </form>
