@@ -2,13 +2,13 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-const { animalSchema, commentSchema } = require('./schema.js');
-const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const ejsMate = require('ejs-mate');
-const Animal = require('./models/animal');
-const Comment = require('./models/comment');
+const session = require('express-session');
+const flash = require('connect-flash');
 
+const animals = require('./routes/animals');
+const comments = require('./routes/comments');
 
 mongoose.set('strictQuery', false);
 
@@ -31,84 +31,34 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-const validateAnimal = (req, res, next) => {
-    const { error } = animalSchema.validate(req.body);
-    if(error) {
-        const msg = error.details.map(el => el.message).join('');
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
+const sessionConfig = {
+    secret: 'thisisasecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        // set expire/max age to 7 days
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        mageAge: 1000 * 60 * 60 * 24 * 7
     }
 };
+app.use(session(sessionConfig));
+app.use(flash());
 
-const validateComment = (req, res, next) => {
-    const { error } = commentSchema.validate(req.body);
-    if(error) {
-        const msg = error.details.map(el => el.message).join('');
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-};
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
+
+app.use('/animals', animals);
+app.use('/animals/:id/comments', comments);
 
 app.get('/', (req, res) => {
     res.render('home')
 });
-
-app.get('/animals', catchAsync(async(req, res) => {
-    const animals = await Animal.find({});
-    res.render('animals/index', {animals});
-}));
-
-app.get('/animals/new', (req, res) => {
-    res.render('animals/new')
-});
-
-app.post('/animals', validateAnimal, catchAsync(async(req, res) => {
-    const animal = new Animal(req.body.animal);
-    await animal.save();
-    res.redirect(`/animals/${animal._id}`);
-}));
-
-app.get('/animals/:id', catchAsync(async(req, res) => {
-    const animal = await Animal.findById(req.params.id).populate('comments');
-    res.render('animals/show', {animal});
-}));
-
-app.get('/animals/:id/edit', catchAsync(async(req, res) => {
-    const animal = await Animal.findById(req.params.id);
-    res.render('animals/edit', {animal});
-}));
-
-app.put('/animals/:id', validateAnimal, catchAsync(async(req, res) => {
-    const { id } = req.params;
-    const animal = await Animal.findByIdAndUpdate(id, { ...req.body.animal});
-    res.redirect(`/animals/${animal._id}`);
-}));
-
-app.delete('/animals/:id', catchAsync(async(req, res) => {
-    const { id } = req.params;
-    await Animal.findByIdAndDelete(id);
-    res.redirect('/animals');
-}));
-
-app.post('/animals/:id/comments', validateComment, catchAsync(async (req, res) => {
-    const animal = await Animal.findById(req.params.id);
-    const comment = new Comment(req.body.comment);
-    animal.comments.push(comment);
-    await comment.save();
-    await animal.save();
-    res.redirect(`/animals/${animal._id}`);
-}));
-
-app.delete('/animals/:id/comments/:commentId', catchAsync(async (req, res) => {
-    const { id, commentId } = req.params;
-    // remove comment from array in mongo
-    await Animal.findByIdAndUpdate(id, { $pull: { comments: commentId } });
-    await Comment.findByIdAndDelete(commentId);
-    res.redirect(`/animals/${id}`);
-}));
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
@@ -117,6 +67,10 @@ app.all('*', (req, res, next) => {
 app.use((err, req, res, next) => {
     const { statusCode = 500} = err;
     if(!err.message) err.message = "Oh No! Something went wrong!" 
+    if(err){
+        req.flash('error', "Page Not Found");
+        return res.redirect(`/animals`);
+    };
     res.status(statusCode).render('error', { err });
 
 });
