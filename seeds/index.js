@@ -24,6 +24,7 @@ const seedDB = async() => {
         const random1000 = Math.floor(Math.random() * 1000);
         const animal = new Animal({
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
+            author: '63e6da9dbefdf0dcab1b39c1',
             image: 'https://source.unsplash.com/collection/9039695',
             species: `${sample(species)}`
         })

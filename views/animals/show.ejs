@@ -10,44 +10,45 @@
                             - <%= animal.name %>
                         <% } %>
                     </h5>
-                    <p class="card-text text-secondary"><%= animal.location %></p>
                 </div>
                 <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-secondary"><%= animal.location %></li>
+                    <li class="list-group-item ">Submitted by <%= animal.author.username %></li>
                     <li class="list-group-item"><%= animal.description %></li>
                 </ul>
+                <% if(currentUser && animal.author.equals(currentUser.id)) { %>
                 <div class="card-body">
                     <a class="card-link btn btn-success" href="/animals/<%= animal._id %>/edit">Edit</a>
                     <form class="d-inline" action="/animals/<%= animal._id %>?_method=DELETE" method="POST">
                         <button class="btn btn-danger">Delete</button>
                     </form>
                 </div>
+                <% } %> 
                 <div class="card-footer text-secondary">
                     2 days ago
                 </div>
             </div>
         </div>
         <div class="col-6">
-            <h2>Leave a Comment</h2>
+            <% if(currentUser) { %> 
             <form action="/animals/<%= animal._id %>/comments" method="POST" class="mb-5 validated-form" novalidate>
-                <div class="mb-3">
-                    <label class="form-label" for="user" class="form-label">User</label>
-                    <input class="form-control" type="text" name="comment[user]" id="user" required>
-                </div>
                 <div class="mb-3">
                     <label for="body" class="form-label">Comment</label>
                     <textarea class="form-control" name="comment[body]" id="body" cols="30" rows="3" required></textarea>
                 </div>
                 <button class="btn btn-success">Submit</button>
             </form>
-            <h2>Comments</h2>
+            <% } %> 
             <% for (let comment of animal.comments) { %>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title"><%= comment.user %></h5>
+                        <h5 class="card-title"><%= comment.author.username %></h5>
                         <p class="card-text"><%= comment.body %></p>
+                        <% if(currentUser && comment.author.equals(currentUser.id)) { %>
                         <form action="/animals/<%= animal._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </form>
+                        <% } %> 
                     </div>
                 </div>
             <% } %>
