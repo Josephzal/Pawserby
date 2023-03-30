@@ -12,7 +12,7 @@ module.exports.animalSchema = Joi.object({
 
 module.exports.commentSchema = Joi.object({
     comment: Joi.object({
-        user: Joi.string().required(),
+        // user: Joi.string().required(),
         body: Joi.string().required()
     }).required()
 });
